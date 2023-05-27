@@ -25,7 +25,6 @@ void udpThread::udpReceiveData()
     udpDataArray.resize(datalen);
     udpSocket->readDatagram(udpDataArray.data(),datalen);/*读取出UDP的数据*/
     emit udpData_signal(udpDataArray);
-
     if(udpDataArray.contains(QByteArrayView("cameraConnected")) == true)
     {
         QString cameraIP;

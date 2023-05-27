@@ -15,7 +15,7 @@ mainWidget::mainWidget(QWidget *parent)
 
     windowInit();
 
-    ui->serverIPLineEdit->setText("192.168.31.194");
+    ui->serverIPLineEdit->setText("192.168.3.10");
     ui->serverPortLineEdit->setText("8001");
 
     serialPortTask = new QThread;                       /*串口处理线程对象*/
@@ -140,6 +140,7 @@ void mainWidget::pictureShowFromData(QByteArray pictureData)
         /*按照pictureLabel的大小缩放显示图片*/
         pictureHeight = pictureImg->height();
         pictureWidth  = pictureImg->width();
+//        qDebug() << pictureImg->format();
         //qDebug() << pictureHeight << "x" << pictureWidth;
         pictureImg->mirror(true,false);
         ui->pictureLabel->setPixmap(QPixmap::fromImage(pictureImg->scaled(ui->pictureLabel->size(),Qt::KeepAspectRatio,Qt::SmoothTransformation)));
@@ -148,6 +149,7 @@ void mainWidget::pictureShowFromData(QByteArray pictureData)
     else
     {
         delete pictureImg;
+        qDebug() << "fail";
         return;
     }
 }

@@ -173,7 +173,7 @@ void wifi_init_sta(char *WIFI_Name,char *WIFI_PassWord)
                  WIFI_Name, WIFI_PassWord);
        
         //xTaskCreate(tcp_client_task, "tcp_client", 1024 * 10, NULL, 6, NULL);/*TCP_client 连接TCP*/
-        xTaskCreate(camera_task, "camera_task", 1024 * 10, NULL, 5, NULL); 
+        xTaskCreate(camera_task, "camera_task", 1024 * 30, NULL, 5, NULL); 
     } 
     else if (bits & WIFI_FAIL_BIT) 
     {
@@ -232,15 +232,15 @@ static camera_config_t camera_config = {
     .pin_pclk = CAM_PIN_PCLK,
 
     //XCLK 20MHz or 10MHz for OV2640 double FPS (Experimental)
-    .xclk_freq_hz = 24000000,
+    .xclk_freq_hz = 22.5 * 1000 * 1000,
     .ledc_timer = LEDC_TIMER_0,
     .ledc_channel = LEDC_CHANNEL_0,
 
     .pixel_format = PIXFORMAT_JPEG, //YUV422,GRAYSCALE,RGB565,JPEG
-    .frame_size = FRAMESIZE_FHD,    //QQVGA-UXGA, For ESP32, do not use sizes above QVGA when not JPEG. The performance of the ESP32-S series has improved a lot, but JPEG mode always gives better frame rates.
+    .frame_size = FRAMESIZE_UXGA,    //QQVGA-UXGA, For ESP32, do not use sizes above QVGA when not JPEG. The performance of the ESP32-S series has improved a lot, but JPEG mode always gives better frame rates.
     //FRAMESIZE_QVGA FRAMESIZE_UXGA
-    .jpeg_quality = 10, //0-63, for OV series camera sensors, lower number means higher quality
-    .fb_count = 2,       //When jpeg mode is used, if fb_count more than one, the driver will work in continuous mode.
+    .jpeg_quality = 8, //0-63, for OV series camera sensors, lower number means higher quality
+    .fb_count = 5,       //When jpeg mode is used, if fb_count more than one, the driver will work in continuous mode.
     .grab_mode = CAMERA_GRAB_WHEN_EMPTY,
 };
 
@@ -256,7 +256,6 @@ static esp_err_t init_camera()
 
     return ESP_OK;
 }
-
 
 void camera_task(void *pvParameters)
 {
@@ -305,53 +304,31 @@ void camera_task(void *pvParameters)
             if( pic != NULL)
             {
                 /* 使用 UDP 发送时，一个数据包大小不超过64K*/
-                int preSendPicLen = pic->len;
+                unsigned int preSendPicLen = pic->len;
                 int sendCnt = 0;
-                int err = 0;
                 unsigned char * startPalce =  pic->buf;
-                if(preSendPicLen > UDP_SEND_MAX_LEN)
+                sendto(sock,&preSendPicLen,4, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));/* 发送图片大小数据包 */
+                /* 发送图片数据包 */
+                if(preSendPicLen > UDP_SEND_MAX_LEN) /* 如果图片的大小大于设定的最大值，分包发送 */
                 {
                     ESP_LOGI(camera,"preSendPicLen = %d \r\n",preSendPicLen);
-                    while(UDP_SEND_MAX_LEN * sendCnt < preSendPicLen)
+                    while(UDP_SEND_MAX_LEN * (sendCnt + 1) < preSendPicLen)
                     {
-                        err = sendto(sock,startPalce + (UDP_SEND_MAX_LEN * sendCnt),UDP_SEND_MAX_LEN, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-                        if (err < 0) 
-                        {
-                            ESP_LOGE(UDP, "Error occurred during sending: errno %d", errno);
-                            break;
-                            
-                        }
+                        sendto(sock,startPalce + (UDP_SEND_MAX_LEN * sendCnt),UDP_SEND_MAX_LEN, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
                         sendCnt++;
-                        vTaskDelay(1);
                     }
-                    sendCnt -= 1;
-                    ESP_LOGI(camera,"sendCnt = %d \r\n",sendCnt);
-                    ESP_LOGI(camera,"leave = %d \r\n",preSendPicLen % UDP_SEND_MAX_LEN);
-                    err = sendto(sock,startPalce + (UDP_SEND_MAX_LEN * sendCnt),preSendPicLen % UDP_SEND_MAX_LEN, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-                    if (err < 0) 
-                    {
-                        ESP_LOGE(UDP, "Error occurred during sending: errno %d", errno);
-                        break;
-                    }
-                    vTaskDelay(1);
+                    sendto(sock,startPalce + (UDP_SEND_MAX_LEN * sendCnt),preSendPicLen % UDP_SEND_MAX_LEN, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
                     sendCnt = 0;
                 }
-                else
+                else                            /* 如果图片的大小没有大于设定的最大值，直接发送 */
                 {
-                    err = sendto(sock,startPalce,preSendPicLen, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-                    if (err < 0) 
-                    {
-                        ESP_LOGE(UDP, "Error occurred during sending: errno %d", errno);
-                        break;
-                        
-                    }
+                    sendto(sock,startPalce,preSendPicLen, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
                 }
+
                 // use pic->buf to access the image
                 ESP_LOGI(camera, "Picture taken! Its size was: %zu bytes,width: %zu,height: %zu", pic->len,pic->width,pic->height);
                 esp_camera_fb_return(pic);
             }
-
-
         }
         else
         {

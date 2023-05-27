@@ -24,90 +24,51 @@ dataProcessing::dataProcessing(QObject *parent)
 void dataProcessing::readDataDeal(QByteArray receiveData)
 {
     unsigned int nowDataSize = 0;/*单次接收的数据量大小*/
-    static unsigned int pictureStartPlace = 0;
-    static unsigned int pictureEndPlace = 0;
-    static char singlePictureCompleted = 0;
+    static unsigned int pictureLen = 0;
     nowDataSize = receiveData.size();
     readDataCount += nowDataSize;
 
-    unsigned int writeDataLen = 0;
-    receivePictureHandle->WriteBytes(receivePictureBuffer,receiveData,&writeDataLen);                   /*向缓冲区写入接收的全部数据*/
-//    qDebug() <<"nowDataSize" << nowDataSize;
-//    qDebug() <<"writeDataLen" << writeDataLen;
-    if(writeDataLen != nowDataSize)qDebug("数据写入不完整");
-    unsigned int nowBufferSize = receivePictureHandle->ValidDataLen(receivePictureBuffer);              /*获取当前缓冲区中的数据长度*/
-//    qDebug() <<"nowBufferSize" << nowBufferSize;
-    QByteArray allPictureData;
-    receivePictureHandle->ReadBytes(receivePictureBuffer,&allPictureData,nowBufferSize);                /*读出缓冲区的所有数据*/
+    static QByteArray pictureData;
 
-
-
-//    qDebug() << receiveData;
-//    qDebug() << "allPictureData" << allPictureData.size();
-//    qDebug() << allPictureData;
-
-    if(singlePictureCompleted == 0)
+    if(nowDataSize == (4))
     {
-        for(unsigned int i = 0;i < nowBufferSize - 1;i++)
-        {
-            if((unsigned char)allPictureData.at(i) == 0xFF && (unsigned char)allPictureData.at(i + 1) == 0xD8)
-            {
-                pictureStartPlace = i;
-                singlePictureCompleted = 1;/**/
-                break;
-            }
-        }
+        pictureLen = (unsigned char)receiveData[0] | ((unsigned char)receiveData[1] << 8) | ((unsigned char)receiveData[2] << 16) | ((unsigned char)receiveData[3] << 24);
     }
 
-    if(singlePictureCompleted == 1)
+    if(nowDataSize == (60 * 1024))
     {
-        for(unsigned int i = pictureStartPlace;i < nowBufferSize - 1;i++)
+        if(((unsigned char)receiveData.at(0) == 0xFF) && ((unsigned char)receiveData.at(1) == 0xD8))
         {
-            if((unsigned char)allPictureData[i] == 0xFF && (unsigned char)allPictureData[i + 1] == 0xD9)
-            {
-                pictureEndPlace = i + 1;
-                singlePictureCompleted = 2;/**/
-                break;
-            }
+            pictureData.clear();
+            pictureData = receiveData;
         }
-    }
-    /* bug:如果帧尾先到图片就会错误*/
-    if(singlePictureCompleted == 2)/*获取到了一张完整的图片数据*/
-    {
-        singlePictureCompleted = 0;
-        pictureFrameCount++;
-        QByteArray wholePictureData;
-        QByteArray leaveData;
-
-        wholePictureData = allPictureData.mid(pictureStartPlace,pictureEndPlace - pictureStartPlace + 1);/*从缓冲区中截取完整的一张图片数据*/
-        qDebug() << "START" << pictureStartPlace << "END" << pictureEndPlace << "SIZE" << pictureEndPlace - pictureStartPlace + 1;
-//        qDebug() << "wholePictureData.size" << wholePictureData.size();
-//        qDebug("%#x%#x%#x%#x",  (unsigned char)wholePictureData.at(0),(unsigned char)wholePictureData.at(1),
-//                                (unsigned char)wholePictureData.at(pictureEndPlace - pictureStartPlace - 1),
-//                                (unsigned char)wholePictureData.at(pictureEndPlace - pictureStartPlace    ));
-
-        leaveData = allPictureData.mid(pictureEndPlace,nowBufferSize - pictureEndPlace);
-//        qDebug() << "leaveData.size()" << leaveData.size() << "nowBufferSize" << nowBufferSize;
-//        qDebug("%#X %#X ",  (unsigned char)leaveData.at(0),(unsigned char)leaveData.at(2));
-
-        receivePictureHandle->WriteBytes(receivePictureBuffer,leaveData,&writeDataLen);/*向缓冲区写入剩余的数据*/
-
-        singlePictureCompleted = 0;
-
-//        QFile *RecFile = new QFile("GET_PICTURE.JPG");
-//        RecFile->open(QFile::WriteOnly);
-//        RecFile->write(wholePictureData);
-//        RecFile->close();
-//        RecFile->deleteLater();
-
-        //emit pictureShow_signal();
-
-        emit pictureDataShow_signal(wholePictureData);
+        else
+        {
+            pictureData += receiveData;
+        }
     }
     else
     {
-        receivePictureHandle->WriteBytes(receivePictureBuffer,allPictureData,&writeDataLen);/*向缓冲区写入接收的全部数据*/
-        singlePictureCompleted = 0;
+        if(((unsigned char)receiveData.at(0) == 0xFF) && ((unsigned char)receiveData.at(1) == 0xD8) )
+        {
+            pictureData = receiveData;
+            if(pictureData.size() == pictureLen)
+            {
+                pictureFrameCount++;
+                emit pictureDataShow_signal(pictureData);
+                pictureData.clear();
+            }
+        }
+        else if((unsigned char)receiveData.at(nowDataSize - 2) == 0xFF && (unsigned char)receiveData.at(nowDataSize - 1) == 0xD9)
+        {
+            pictureData += receiveData;
+            if(pictureData.size() == pictureLen)
+            {
+                pictureFrameCount++;
+                emit pictureDataShow_signal(pictureData);
+                pictureData.clear();
+            }
+        }
     }
 }
 
