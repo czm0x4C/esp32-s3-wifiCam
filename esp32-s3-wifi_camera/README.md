@@ -11,7 +11,7 @@
 
 ESP32S3我使用的是ESP32-S3-N8R8 有8Mbit的内存对其设置如下[![](https://github.com/FENGYUQWQ/esp32-s3-wifiCam/blob/main/image/ESP-IDF-ESP%20PSRAM%E7%9A%84%E9%85%8D%E7%BD%AE.png)](https://github.com/FENGYUQWQ/esp32-s3-wifiCam/blob/main/image/ESP-IDF-ESP%20PSRAM%E7%9A%84%E9%85%8D%E7%BD%AE.png)
 
-提高WIFID的数据吞吐量，设置的过小会导致丢包严重，过大会导致ESP32的内存耗尽[![](https://github.com/FENGYUQWQ/esp32-s3-wifiCam/blob/main/image/ESP-IDF-WIFI%E8%AE%BE%E7%BD%AE.png)](https://github.com/FENGYUQWQ/esp32-s3-wifiCam/blob/main/image/ESP-IDF-WIFI%E8%AE%BE%E7%BD%AE.png)
+提高WIFI的数据吞吐量，设置的过小会导致丢包严重，过大会导致ESP32的内存耗尽[![](https://github.com/FENGYUQWQ/esp32-s3-wifiCam/blob/main/image/ESP-IDF-WIFI%E8%AE%BE%E7%BD%AE.png)](https://github.com/FENGYUQWQ/esp32-s3-wifiCam/blob/main/image/ESP-IDF-WIFI%E8%AE%BE%E7%BD%AE.png)
 
 # 已知BUG
 硬件：不支持超过24M的时钟，暂时不知原因，没有设置自定义的按键
