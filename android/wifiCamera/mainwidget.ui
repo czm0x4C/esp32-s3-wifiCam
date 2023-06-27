@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>mainWidget</class>
+ <widget class="QWidget" name="mainWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>824</width>
+    <height>399</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>mainWidget</string>
+  </property>
+  <widget class="QLabel" name="pictureLabel">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>511</width>
+     <height>360</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="pictureInfoLabel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>261</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>530</x>
+     <y>20</y>
+     <width>291</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>连接设置</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="3">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;端口：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QLineEdit" name="serverPortLineEdit">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="5">
+     <widget class="QComboBox" name="udpCamerasComboBox"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;地址：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="2">
+     <widget class="QLineEdit" name="serverIPLineEdit">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3" colspan="2">
+     <widget class="QPushButton" name="udpClosePushButton">
+      <property name="text">
+       <string>断开UDP服务器</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3">
+     <widget class="QPushButton" name="udpClientConnectPushButton">
+      <property name="text">
+       <string>连接UDP服务器</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3" colspan="2">
+     <widget class="QPushButton" name="connectCameraForUDPPushButton">
+      <property name="text">
+       <string>连接相机</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="3">
+     <widget class="QPushButton" name="searchCameraforUDPPushButton">
+      <property name="text">
+       <string>搜索相机(UDP)</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>530</x>
+     <y>170</y>
+     <width>291</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>相机参数设置</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>图片格式:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="5">
+     <widget class="QComboBox" name="picFormatComboBox"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>图片大小:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" colspan="5">
+     <widget class="QComboBox" name="picSizeComboBox"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_10">
+      <property name="text">
+       <string>JPEG质量:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" colspan="5">
+     <widget class="QComboBox" name="picJpegQualityComboBox"/>
+    </item>
+    <item row="3" column="0" colspan="3">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>定时删除回放时间(s):</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3" colspan="3">
+     <widget class="QLineEdit" name="picRecordDeleteTimeLineEdit"/>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QLabel" name="label_11">
+      <property name="text">
+       <string>设备ID:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="3" colspan="3">
+     <widget class="QLineEdit" name="picDeviceIDLineEdit"/>
+    </item>
+    <item row="5" column="0" colspan="4">
+     <widget class="QPushButton" name="readDeviceAttributePushButton">
+      <property name="text">
+       <string>获取设备属性</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="4" colspan="2">
+     <widget class="QPushButton" name="setDeviceAttributePushButton">
+      <property name="text">
+       <string>设置设备属性</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="2">
+     <widget class="QPushButton" name="viewRecordVideoPushButton">
+      <property name="text">
+       <string>查看录像</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2" colspan="3">
+     <widget class="QPushButton" name="backRecordVideoPushButton">
+      <property name="text">
+       <string>上个时刻</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="5">
+     <widget class="QPushButton" name="nextRecordVideoPushButton">
+      <property name="text">
+       <string>下个时刻</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
