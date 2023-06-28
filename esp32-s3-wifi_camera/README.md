@@ -1,7 +1,7 @@
 ﻿[TOC]
 ---
 # esp32-camera组件导入
-因为涉及使用到OV2640，为了方便这里使用开源的ESP摄像头调用库，它支持很多型号，任君挑选，详见esp32-camera
+因为涉及使用到OV2640，为了方便这里使用开源的ESP摄像头调用库，它支持很多型号，任君挑选，详见[esp32-camera](https://github.com/espressif/esp32-camera "esp32-camera")
 
 # ESP-IDF对芯片的优化（重要）
 由于需要传输大量的图像数据，所以要对芯片设置一些额外设置
